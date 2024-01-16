@@ -9,7 +9,7 @@ namespace DailyApp.Controller
         public static bool Add(Diary daily)
         {
             SqlConnection conn = DB.Conn();
-            SqlCommand cmd = new SqlCommand("INSERT INTO Diary (Name, DateCreated, DateModified, IsActive, IsDeleted) VALUES (@name, @dateCreated, @dateModified, @isActive, @isDeleted)", conn);
+            SqlCommand cmd = new SqlCommand("INSERT INTO Diaries (Name, DateCreated, DateModified, IsActive, IsDeleted) VALUES (@name, @dateCreated, @dateModified, @isActive, @isDeleted)", conn);
             cmd.Parameters.AddWithValue("name", daily.Name);
             cmd.Parameters.AddWithValue("dateCreated", daily.DateCreated);
             cmd.Parameters.AddWithValue("dateModified", daily.DateModified);
@@ -25,7 +25,7 @@ namespace DailyApp.Controller
         public static List<Diary> GetAll()
         {
             SqlConnection conn = DB.Conn();
-            SqlCommand cmd = new SqlCommand("SELECT Id, Name, DateCreated, DateModified FROM Diary WHERE IsActive = 1 AND IsDeleted = 0", conn);
+            SqlCommand cmd = new SqlCommand("SELECT Id, Name, DateCreated, DateModified FROM Diaries WHERE IsActive = 1 AND IsDeleted = 0", conn);
 
             conn.Open();
 
@@ -49,7 +49,7 @@ namespace DailyApp.Controller
         public static bool RemoveAll()
         {
             SqlConnection conn = DB.Conn();
-            SqlCommand cmd = new SqlCommand("UPDATE Diary SET IsActive=0, IsDeleted=1, DateModified=@date", conn);
+            SqlCommand cmd = new SqlCommand("UPDATE Diaries SET IsActive=0, IsDeleted=1, DateModified=@date", conn);
             cmd.Parameters.AddWithValue("date", DateTime.Now);
 
             conn.Open();
@@ -62,7 +62,7 @@ namespace DailyApp.Controller
         {
             SqlConnection conn = DB.Conn();
             diary.DateModified = DateTime.Now;
-            SqlCommand cmd = new SqlCommand("UPDATE Diary SET DateModified=@date, Name=@name WHERE Id=@id", conn);
+            SqlCommand cmd = new SqlCommand("UPDATE Diaries SET DateModified=@date, Name=@name WHERE Id=@id", conn);
             cmd.Parameters.AddWithValue("id", diary.Id);
             cmd.Parameters.AddWithValue("date", diary.DateModified);
             cmd.Parameters.AddWithValue("name", diary.Name);
@@ -75,7 +75,7 @@ namespace DailyApp.Controller
         public static bool RemoveById(int id)
         {
             SqlConnection conn = DB.Conn();
-            SqlCommand cmd = new SqlCommand("UPDATE Diary SET IsActive=0, IsDeleted=1, DateModified=@date WHERE Id = @id ", conn);
+            SqlCommand cmd = new SqlCommand("UPDATE Diaries SET IsActive=0, IsDeleted=1, DateModified=@date WHERE Id = @id ", conn);
             cmd.Parameters.AddWithValue("id", id);
             cmd.Parameters.AddWithValue("date", DateTime.Now);
             conn.Open();
@@ -86,7 +86,7 @@ namespace DailyApp.Controller
         public static bool CheckCurrentDateHasDiary()
         {
             SqlConnection conn = DB.Conn();
-            SqlCommand cmd = new SqlCommand("SELECT TOP(1) Id FROM Diary WHERE YEAR(DateCreated)=YEAR(GETDATE()) AND MONTH(DateCreated)=MONTH(GETDATE()) AND DAY(DateCreated) = DAY(GETDATE()) AND IsActive=1 AND IsDeleted = 0", conn);
+            SqlCommand cmd = new SqlCommand("SELECT TOP(1) Id FROM Diaries WHERE YEAR(DateCreated)=YEAR(GETDATE()) AND MONTH(DateCreated)=MONTH(GETDATE()) AND DAY(DateCreated) = DAY(GETDATE()) AND IsActive=1 AND IsDeleted = 0", conn);
             conn.Open();
             int affectedRows = cmd.ExecuteScalar() == null ? 0 : (int)cmd.ExecuteScalar();
             conn.Close();

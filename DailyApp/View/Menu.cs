@@ -5,18 +5,45 @@ namespace DailyApp.View
 {
     public static class Menu
     {
+        public static bool _isLogin { get; set; } = false;
         public static void Index()
         {
-            Console.Clear();
-            Console.WriteLine("============ Hoşgeldiniz ============");
-            Console.WriteLine("1) Günlük Ekle");
-            Console.WriteLine("2) Günlükleri Listele");
-            Console.WriteLine("3) Tüm Günlükleri Sil");
-            Console.WriteLine("0) Çıkış");
 
-            string? selection = Console.ReadLine();
-            Console.Clear();
-            ChooseOption(selection ?? "");
+            Login();
+
+            if (_isLogin)
+            {
+                Console.Clear();
+                Console.WriteLine("============ Hoşgeldiniz ============");
+                Console.WriteLine("1) Günlük Ekle");
+                Console.WriteLine("2) Günlükleri Listele");
+                Console.WriteLine("3) Tüm Günlükleri Sil");
+                Console.WriteLine("0) Çıkış");
+
+                string? selection = Console.ReadLine();
+                Console.Clear();
+                ChooseOption(selection ?? "");
+            }
+            else
+            {
+                Console.WriteLine("Yanlış Kullanıcı adı veya şifre girdiniz");
+                Thread.Sleep(1000);
+                Console.Clear();
+            }
+        }
+        public static void Login()
+        {
+            if (!_isLogin)
+            {
+                Console.WriteLine("Lütfen Giriş Yapınız.");
+                User user = new User();
+                Console.Write("Kullanıcı Adı: ");
+                user.Username = Console.ReadLine();
+                Console.Write("Şifre: ");
+                user.Password = Console.ReadLine();
+
+                _isLogin = UserController.Login(user);
+            }
         }
         public static void ChooseOption(string selection)
         {
@@ -48,25 +75,36 @@ namespace DailyApp.View
             Console.WriteLine("============ Günlük Ekle ============");
             
             if(!DiaryController.CheckCurrentDateHasDiary())
+                Add();
+            else
             {
-                Console.Write("Günlük Ekleyiniz: ");
-
-                Diary daily = new() { Name = Console.ReadLine() };
-
-                if (DiaryController.Add(daily))
+                Console.WriteLine("Bugün günlük kaydı girdin, aynı tarihte yeni bir kayıt eklemek ister misin? (e)vet/(h)ayır");
+                string option = Console.ReadLine();
+                switch(option)
                 {
-                    Console.WriteLine("Başarılı Şekilde Eklendi");
+                    case "e":
+                        Add();
+                        break;
+                    case "h":
+                        break;
                 }
-                else
-                {
-                    Console.WriteLine("Eklenirken bir hata oluştu. Yeniden deneyiniz lütfen");
-                }
+            }
+
+        }
+        public static void Add()
+        {
+            Console.Write("Günlük Ekleyiniz: ");
+
+            Diary daily = new() { Name = Console.ReadLine() };
+
+            if (DiaryController.Add(daily))
+            {
+                Console.WriteLine("Başarılı Şekilde Eklendi");
             }
             else
             {
-                Console.WriteLine($"{DateTime.Now.ToString("dd MMMM yyyy")} Tarihi için günlük daha önceden eklendi. Lütfen Ana menüye Dönünüz.");
+                Console.WriteLine("Eklenirken bir hata oluştu. Yeniden deneyiniz lütfen");
             }
-
         }
         public static void DailyGetAll()
         {
