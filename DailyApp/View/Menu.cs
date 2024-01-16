@@ -81,18 +81,25 @@ namespace DailyApp.View
                     Console.WriteLine("============ Günlükleri Listele ============");
                     Console.WriteLine(diary.DateCreated.ToString("dd MMMM yyyy"));
                     Console.WriteLine(diary.Name);
-                    Console.WriteLine($"{(diaries.Count != count ? "(s)onraki kayıt | (a)na menü": "(a)na menü")} | Kalan Günlük: {diaries.Count - count}");
+                    Console.WriteLine($"{(diaries.Count != count ? "(s)onraki kayıt | ": "")}(d)üzenle | (si)l | (a)na menü | Kalan Günlük: {diaries.Count - count}");
                     string option = Console.ReadLine();
-                    if (option == "a")
-                        break;
-                    else if (option == "s")
+                    switch (option)
                     {
-                        Console.Clear();
-                        count++;
-                        continue;
+                        case "a":
+                            return;
+                        case "s":
+                            Console.Clear();
+                            count++;
+                            continue;
+                        case "d":
+                            DailyUpdate(diary);
+                            return;
+                        case "si":
+                            DailyRemoveById(diary.Id);
+                            return;
+                        default:
+                            return;
                     }
-                    else
-                        break;
                 }
             }
             else
@@ -117,6 +124,32 @@ namespace DailyApp.View
                     Console.WriteLine("Silinirken hata oluştu yeniden deneyiniz lütfen.");
                 }
             }
+        }
+        public static void DailyUpdate(Diary diary)
+        {
+            Console.Write($"\"{diary.Name}\" Günlük düzenlemek için yazınız: ");
+            diary.Name = Console.ReadLine();
+            if (DiaryController.Update(diary))
+            {
+                Console.WriteLine("Günlük Başarılı ile düzenlendi.");
+            }
+            else
+            {
+                Console.WriteLine("Günlük düzenlenirken bir hata oluştu lütfen yeniden deneyiniz.");
+            }
+            Thread.Sleep(1000);
+        }
+        public static void DailyRemoveById(int id)
+        {
+            if (DiaryController.RemoveById(id))
+            {
+                Console.WriteLine("Günlük Başarılı ile silindi.");
+            }
+            else
+            {
+                Console.WriteLine("Günlük silinirken bir hata oluştu lütfen yeniden deneyiniz.");
+            }
+            Thread.Sleep(1000);
         }
         public static void Exit()
         {

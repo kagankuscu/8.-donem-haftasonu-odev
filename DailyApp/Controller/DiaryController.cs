@@ -49,12 +49,38 @@ namespace DailyApp.Controller
         public static bool RemoveAll()
         {
             SqlConnection conn = DB.Conn();
-            SqlCommand cmd = new SqlCommand("UPDATE Diary SET IsActive=0, IsDeleted=1", conn);
+            SqlCommand cmd = new SqlCommand("UPDATE Diary SET IsActive=0, IsDeleted=1, DateModified=@date", conn);
+            cmd.Parameters.AddWithValue("date", DateTime.Now);
 
             conn.Open();
             int affectedRows = cmd.ExecuteNonQuery();
             conn.Close();
 
+            return affectedRows > 0;
+        }
+        public static bool Update(Diary diary)
+        {
+            SqlConnection conn = DB.Conn();
+            diary.DateModified = DateTime.Now;
+            SqlCommand cmd = new SqlCommand("UPDATE Diary SET DateModified=@date, Name=@name WHERE Id=@id", conn);
+            cmd.Parameters.AddWithValue("id", diary.Id);
+            cmd.Parameters.AddWithValue("date", diary.DateModified);
+            cmd.Parameters.AddWithValue("name", diary.Name);
+
+            conn.Open();
+            int affectedRows = cmd.ExecuteNonQuery();
+            conn.Close();
+            return affectedRows > 0;
+        }
+        public static bool RemoveById(int id)
+        {
+            SqlConnection conn = DB.Conn();
+            SqlCommand cmd = new SqlCommand("UPDATE Diary SET IsActive=0, IsDeleted=1, DateModified=@date WHERE Id = @id ", conn);
+            cmd.Parameters.AddWithValue("id", id);
+            cmd.Parameters.AddWithValue("date", DateTime.Now);
+            conn.Open();
+            int affectedRows = cmd.ExecuteNonQuery();
+            conn.Close();
             return affectedRows > 0;
         }
         public static bool CheckCurrentDateHasDiary()
