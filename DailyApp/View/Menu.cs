@@ -30,6 +30,7 @@ namespace DailyApp.View
                     break;
                 case "1":
                     DailyAdd();
+                    Thread.Sleep(2000);
                     break;
                 case "2":
                     DailyGetAll();
@@ -41,46 +42,63 @@ namespace DailyApp.View
                     Console.WriteLine("Hatalı sayı girdiniz.\nLütfen 0 ile 3 Arasında bir sayı giriniz.");
                     break;
             }
-
-            Thread.Sleep(2000);
         }
         public static void DailyAdd()
         {
             Console.WriteLine("============ Günlük Ekle ============");
-
-            Console.Write("Günlük Ekleyiniz: ");
-
-            Diary daily = new() { Name = Console.ReadLine() };
-
-            if (DiaryController.Add(daily))
+            
+            if(!DiaryController.CheckCurrentDateHasDiary())
             {
-                Console.WriteLine("Başarılı Şekilde Eklendi");
+                Console.Write("Günlük Ekleyiniz: ");
+
+                Diary daily = new() { Name = Console.ReadLine() };
+
+                if (DiaryController.Add(daily))
+                {
+                    Console.WriteLine("Başarılı Şekilde Eklendi");
+                }
+                else
+                {
+                    Console.WriteLine("Eklenirken bir hata oluştu. Yeniden deneyiniz lütfen");
+                }
             }
             else
             {
-                Console.WriteLine("Eklenirken bir hata oluştu. Yeniden deneyiniz lütfen");
+                Console.WriteLine($"{DateTime.Now.ToString("dd MMMM yyyy")} Tarihi için günlük daha önceden eklendi. Lütfen Ana menüye Dönünüz.");
             }
 
         }
         public static void DailyGetAll()
         {
-            Console.WriteLine("============ Günlükleri Listele ============");
+            
             List<Diary> diaries = DiaryController.GetAll();
+            int count = 1;
 
             if (diaries.Count > 0)
             {
                 foreach (Diary diary in diaries)
                 {
+                    Console.WriteLine("============ Günlükleri Listele ============");
                     Console.WriteLine(diary.DateCreated.ToString("dd MMMM yyyy"));
                     Console.WriteLine(diary.Name);
-                    Console.WriteLine("---------------------");
+                    Console.WriteLine($"{(diaries.Count != count ? "(s)onraki kayıt | (a)na menü": "(a)na menü")} | Kalan Günlük: {diaries.Count - count}");
+                    string option = Console.ReadLine();
+                    if (option == "a")
+                        break;
+                    else if (option == "s")
+                    {
+                        Console.Clear();
+                        count++;
+                        continue;
+                    }
+                    else
+                        break;
                 }
-                Console.WriteLine("Devam Etmek için her hangi tuşa basınız.");
-                Console.ReadKey();
             }
             else
             {
                 Console.WriteLine("Gösterilecek Günlük Bulunmuyor.");
+                Thread.Sleep(1000);
             }
         }
         public static void DailyRemoveAll()
