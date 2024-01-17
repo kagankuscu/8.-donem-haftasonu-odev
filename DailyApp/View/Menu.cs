@@ -18,6 +18,7 @@ namespace DailyApp.View
                 Console.WriteLine("1) Günlük Ekle");
                 Console.WriteLine("2) Günlükleri Listele");
                 Console.WriteLine("3) Tüm Günlükleri Sil");
+                Console.WriteLine("4) Kayıt Ara");
                 Console.WriteLine("0) Çıkış");
 
                 string? selection = Console.ReadLine();
@@ -64,6 +65,9 @@ namespace DailyApp.View
                     break;
                 case "3":
                     DailyRemoveAll();
+                    break;
+                case "4":
+                    GetDailyByDate();
                     break;
                 default:
                     Console.WriteLine("Hatalı sayı girdiniz.\nLütfen 0 ile 3 Arasında bir sayı giriniz.");
@@ -162,6 +166,21 @@ namespace DailyApp.View
                     Console.WriteLine("Silinirken hata oluştu yeniden deneyiniz lütfen.");
                 }
             }
+        }
+        public static void GetDailyByDate()
+        {
+            Console.WriteLine("============ Günlük Ara ============");
+            Console.Write("Tarih Giriniz: ");
+            DateTime date = DateTime.Parse(Console.ReadLine());
+
+            List<Diary> diaries = DiaryController.GetDiariesByDate(date);
+            foreach(Diary diary in diaries)
+            {
+                Console.WriteLine(diary.DateCreated.ToString("dd MMMM yyyy"));
+                Console.WriteLine(diary.Name);
+                Console.WriteLine("---------------------");
+            }
+            Thread.Sleep(2000);
         }
         public static void DailyUpdate(Diary diary)
         {
