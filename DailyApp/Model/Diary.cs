@@ -9,5 +9,6 @@ namespace DailyApp.Model
     public class Diary: BaseModel
     {
         public string Name { get; set; }
+        public int UserId { get; set; }
     }
 }
