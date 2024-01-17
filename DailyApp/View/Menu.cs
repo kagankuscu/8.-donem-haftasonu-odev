@@ -96,6 +96,8 @@ namespace DailyApp.View
             user.Fullname = Console.ReadLine();
             Console.Write("Kullanıcı Adı Giriniz: ");
             user.Username = Console.ReadLine();
+            User alreadyExistsUser = UserController.GetByUsername(user.Username);
+
             Console.Write("Şifrenizi Giriniz: ");
             user.Password = Console.ReadLine();
             Console.Write("Güvenlik Sorunuzu Giriniz: ");
@@ -103,13 +105,22 @@ namespace DailyApp.View
             Console.Write("Güvenlik Cevabınızı Giriniz: ");
             user.SecurityAnswer = Console.ReadLine();
 
-            if (UserController.Register(user))
+            if (alreadyExistsUser == null)
             {
-                Console.WriteLine("Başarılı olarak kayıt oluştu.");
+                if (UserController.Register(user))
+                {
+                    Console.WriteLine("Başarılı olarak kayıt oluştu.");
+                }
+                else
+                {
+                    Console.WriteLine("Kayıt olurken hata oluştu.");
+                }
             }
             else
             {
-                Console.WriteLine("Kayıt olurken hata oluştu.");
+                Console.WriteLine("Bu Kullanıcı kayıtlı, şifrenizi sıfırlamak ister misin? (e)vet/(h)ayır");
+                if (Console.ReadLine() == "e")
+                    ForgetPassword();
             }
         }
         public static void ForgetPassword()
